@@ -263,10 +263,10 @@
     ];
 
     const subTexts = [
-      "¿Te cuesta mucho llevar el paquete o qué?",
+      "¿Te cuesta mucho llevar el envío o qué?",
       "No te hagas el loco, necesito mi envío hoy mismo.",
       "Te estoy viendo la cara, no me florees y haz el envío.",
-      "Ya me está dando taquicardia de esperar ese paquete ptmre.",
+      "Ya me está dando taquicardia de esperar ese envío ptmre.",
       "Última advertencia antes de perder la cabeza por el envío."
     ];
 
@@ -353,20 +353,18 @@
 
         showVideo("pipipipi.mp4");
         document.getElementById('title-text').innerText = "PIPIPIPIPI... ¿NO HARÁS MI ENVÍO? 😭💀";
-        document.getElementById('sub-text').innerText = "Destruiste mis ilusiones con el paquete, ctv.";
+        document.getElementById('sub-text').innerText = "Destruiste mis ilusiones con el envío, ctv.";
         growYes();
         moveButtonInsideScreen();
         return;
       }
 
       if (step === 1) {
-        // La traición: Dijo que SÍ y luego marcó que NO
         document.getElementById('title-text').innerText = "¡¿OE PTMRE YA HABÍAS DICHO QUE SÍ HARÍAS EL ENVÍO?!";
         document.getElementById('sub-text').innerText = "¡Te me tiras para atrás con el envío y te busco ah!";
         
-        // Cambio de barra a Traición
         document.getElementById('meter-label').innerText = "Nivel de traición 🗡️";
-        document.getElementById('meter-label').style.color = "#ef4444"; // Rojo sangre
+        document.getElementById('meter-label').style.color = "#ef4444"; 
         document.getElementById('meter-val').innerText = "MÁXIMO";
         document.getElementById('meter-fill').style.width = "100%";
         document.getElementById('meter-fill').style.background = "#dc2626";
@@ -388,11 +386,10 @@
 
     function handleYes() {
       if (step === 0) {
-        // Primer SÍ: La trampa del detector
         step = 1;
         
         document.getElementById('meter-label').innerText = "Detector de florazo 🧐";
-        document.getElementById('meter-label').style.color = "#fbbf24"; // Amarillo dudoso
+        document.getElementById('meter-label').style.color = "#fbbf24"; 
         document.getElementById('meter-val').innerText = "Evaluando...";
         document.getElementById('meter-fill').style.width = "50%";
         document.getElementById('meter-fill').style.background = "linear-gradient(90deg, #f59e0b, #fbbf24)";
@@ -403,18 +400,17 @@
         document.getElementById('btn-yes').style.transform = "scale(1)";
         document.getElementById('btn-no').style.transform = "translate(0, 0)";
       } else if (step === 1) {
-        // Segundo SÍ: Definitivo / Victoria
         step = 2;
         
         document.getElementById('meter-label').innerText = "Paz mental 🕊️";
-        document.getElementById('meter-label').style.color = "#10b981"; // Verde éxito
+        document.getElementById('meter-label').style.color = "#10b981"; 
         document.getElementById('meter-val').innerText = "100%";
         document.getElementById('meter-fill').style.width = "100%";
         document.getElementById('meter-fill').style.background = "linear-gradient(90deg, #22c55e, #10b981)";
 
         showVideo("satisfecho.mp4");
         document.getElementById('title-text').innerText = "¡MÁS TE VALE QUE HAGAS MI ENVÍO CTV! 🤬📦";
-        document.getElementById('sub-text').innerText = "Ya capturé la pantalla, no hay marcha atrás con el paquete.";
+        document.getElementById('sub-text').innerText = "Ya capturé la pantalla, no hay marcha atrás con el envío.";
 
         const noBtn = document.getElementById('btn-no');
         if (noBtn) noBtn.style.display = 'none';
