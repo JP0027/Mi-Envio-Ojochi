@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>¿Tío Ohoshi harás mi envío?</title>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    /* Importamos "Titan One", una fuente súper gruesa y redondeada muy similar a tu logo */
+    @import url('https://fonts.googleapis.com/css2?family=Titan+One&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #1e1b4b, #09090b);
+      color: #fafafa;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .card {
+      background: rgba(24, 24, 27, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(14px);
+      width: 100%;
+      max-width: 400px;
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .meter-container {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .meter-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fb7185;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .meter-bar {
+      width: 100%;
+      height: 10px;
+      background: #27272a;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 10%;
+      background: linear-gradient(90deg, #fbbf24, #f43f5e);
+      transition: width 0.3s ease;
+    }
+
+    .media-wrapper {
+      width: 100%;
+      height: 270px;
+      border-radius: 18px;
+      overflow: hidden;
+      background: #18181b;
+      border: 2px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Marca de Agua más translúcida pero visible y con nueva fuente */
+    .media-wrapper::after {
+      content: "OHOSHI STORE";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-15deg);
+      font-family: 'Titan One', cursive; 
+      font-size: 2.8rem;
+      color: rgba(255, 255, 255, 0.08); /* Mucho más translúcido (8%) */
+      -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.2); /* Borde suave */
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.4); /* Sombra difuminada para que destaque sin molestar */
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      z-index: 30;
+      letter-spacing: 2px;
+    }
+
+    .media-element {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 900;
+      line-height: 1.25;
+      color: #fff;
+    }
+
+    p.subtitle {
+      font-size: 0.88rem;
+      color: #a1a1aa;
+      min-height: 22px;
+    }
+
+    .buttons-container {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 6px;
+      min-height: 60px;
+      position: relative;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 14px;
+      font-weight: 800;
+      font-size: 1.05rem;
+      cursor: pointer;
+      padding: 14px 24px;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .btn-yes {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);
+      flex: 1;
+      z-index: 20;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn-yes:active {
+      transform: scale(0.96);
+    }
+
+    .btn-no {
+      background: #dc2626;
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(220, 38, 38, 0.35);
+      flex: 1;
+      white-space: nowrap;
+      z-index: 100;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .btn-wsp {
+      width: 100%;
+      background: #25d366;
+      color: #111;
+      padding: 16px;
+      border-radius: 14px;
+      font-weight: 900;
+      font-size: 0.95rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 8px 20px rgba(37, 211, 102, 0.35);
+      margin-top: 6px;
+      animation: pulse 1.6s infinite;
+    }
+
+    .brand-footer {
+      margin-top: 20px;
+      font-family: 'Titan One', cursive;
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.15);
+      letter-spacing: 2px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="main-card">
+    <div class="meter-container">
+      <div class="meter-header">
+        <span>Nivel de ansiedad</span>
+        <span id="meter-val">10%</span>
+      </div>
+      <div class="meter-bar">
+        <div id="meter-fill" class="meter-fill"></div>
+      </div>
+    </div>
+
+    <div class="media-wrapper" id="media-box">
+      <img id="meme-img" class="media-element" alt="Meme" src="llorando1.jpg">
+      <video id="meme-video" class="media-element" style="display: none;" playsinline loop autoplay></video>
+    </div>
+
+    <h1 id="title-text">¿Tío Ohoshi harás mi envío?</h1>
+    <p id="sub-text" class="subtitle">Responde con la verdad carajo, ¿sí o no?</p>
+
+    <div id="action-area" class="buttons-container">
+      <button id="btn-yes" class="btn btn-yes" onclick="handleYes()">SÍ</button>
+      <button id="btn-no" class="btn btn-no" onclick="handleNo()">NO</button>
+    </div>
+  </div>
+
+  <div class="brand-footer">OHOSHI STORE © 2026</div>
+
+  <script>
+    const MEMES_NO = [
+      "llorando2.jpg",
+      "chido.jpg",
+      "vigilando2.jpg",
+      "llorando3.jpg",
+      "vigilando3.jpg"
+    ];
+
+    let step = 0;
+    let noAttempts = 0;
+    let anxietyLevel = 10;
+
+    const noTitles = [
+      "¡OE PTMRE, ¿NO HARÁS MI ENVÍO?!",
+      "¿QUÉ TIENES CTV? ¡MÁNDALO!",
+      "¡NO ME DIGAS QUE NO HARÁS EL ENVÍO!",
+      "¡DEJA DE WEVEAR Y HAZ MI ENVÍO!",
+      "¡¿CÓMO QUE NO HARÁS MI ENVÍO, CTV?!"
+    ];
+
+    const subTexts = [
+      "¿Te cuesta mucho llevar el paquete o qué?",
+      "No te hagas el loco, necesito mi envío hoy mismo.",
+      "Te estoy viendo la cara, no me florees y haz el envío.",
+      "Ya me está dando taquicardia de esperar ese paquete ptmre.",
+      "Última advertencia antes de perder la cabeza por el envío."
+    ];
+
+    function showImage(filename) {
+      const vid = document.getElementById('meme-video');
+      const img = document.getElementById('meme-img');
+      vid.pause();
+      vid.removeAttribute('src');
+      vid.load();
+      vid.style.display = 'none';
+
+      img.src = filename;
+      img.style.display = 'block';
+    }
+
+    function showVideo(filename) {
+      const vid = document.getElementById('meme-video');
+      const img = document.getElementById('meme-img');
+      img.style.display = 'none';
+
+      vid.muted = false;
+      vid.volume = 1.0;
+      vid.playsInline = true;
+      vid.loop = true;
+
+      vid.src = encodeURI(filename);
+      vid.style.display = 'block';
+      vid.load();
+
+      const playPromise = vid.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          vid.muted = true;
+          vid.play();
+          document.body.addEventListener('click', () => {
+            vid.muted = false;
+            vid.volume = 1.0;
+          }, { once: true });
+        });
+      }
+    }
+
+    function addAnxiety(amount) {
+      anxietyLevel = Math.min(100, anxietyLevel + amount);
+      document.getElementById('meter-val').innerText = anxietyLevel + "%";
+      document.getElementById('meter-fill').style.width = anxietyLevel + "%";
+    }
+
+    function moveButtonInsideScreen() {
+      if (step === 2) return;
+      const noBtn = document.getElementById('btn-no');
+
+      const screenW = window.innerWidth;
+      const screenH = window.innerHeight;
+
+      const maxDeltaX = Math.min(110, Math.floor(screenW * 0.28));
+      const maxDeltaY = Math.min(65, Math.floor(screenH * 0.12));
+
+      const randX = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * maxDeltaX) + 20);
+      const randY = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * maxDeltaY) + 15);
+
+      noBtn.style.transform = `translate(${randX}px, ${randY}px)`;
+    }
+
+    function growYes() {
+      const yesBtn = document.getElementById('btn-yes');
+      const scale = Math.min(1 + (noAttempts * 0.08), 1.28);
+      yesBtn.style.transform = `scale(${scale})`;
+    }
+
+    function handleNo() {
+      noAttempts++;
+
+      if (noAttempts >= 6) {
+        anxietyLevel = 100;
+        document.getElementById('meter-val').innerText = "100%";
+        document.getElementById('meter-fill').style.width = "100%";
+
+        showVideo("pipipipi.mp4");
+        document.getElementById('title-text').innerText = "PIPIPIPIPI... ¿NO HARÁS MI ENVÍO? 😭💀";
+        document.getElementById('sub-text').innerText = "Destruiste mis ilusiones con el paquete, ctv.";
+        growYes();
+        moveButtonInsideScreen();
+        return;
+      }
+
+      addAnxiety(18);
+
+      if (step === 1) {
+        document.getElementById('title-text').innerText = "¡¿OE PTMRE YA HABÍAS DICHO QUE SÍ HARÍAS EL ENVÍO?!";
+        document.getElementById('sub-text').innerText = "¡Te me tiras para atrás con el envío y te busco ah!";
+        step = 0;
+      } else {
+        const index = (noAttempts - 1) % noTitles.length;
+        document.getElementById('title-text').innerText = noTitles[index];
+        document.getElementById('sub-text').innerText = subTexts[index];
+      }
+
+      const imgIndex = (noAttempts - 1) % MEMES_NO.length;
+      showImage(MEMES_NO[imgIndex]);
+      
+      growYes();
+      moveButtonInsideScreen();
+    }
+
+    function handleYes() {
+      if (step === 0) {
+        step = 1;
+        addAnxiety(20);
+        showVideo("pible surfeando.mp4");
+        document.getElementById('title-text').innerText = "¿SEGURO QUE HARÁS MI ENVÍO? 🤨🏄";
+        document.getElementById('sub-text').innerText = "Mírame a los ojos y repite que sí harás mi envío...";
+        document.getElementById('btn-yes').style.transform = "scale(1)";
+        document.getElementById('btn-no').style.transform = "translate(0, 0)";
+      } else if (step === 1) {
+        step = 2;
+        anxietyLevel = 100;
+        document.getElementById('meter-val').innerText = "100%";
+        document.getElementById('meter-fill').style.width = "100%";
+
+        showVideo("satisfecho.mp4");
+        document.getElementById('title-text').innerText = "¡MÁS TE VALE QUE HAGAS MI ENVÍO CTV! 🤬📦";
+        document.getElementById('sub-text').innerText = "Ya capturé la pantalla, no hay marcha atrás con el paquete.";
+
+        const noBtn = document.getElementById('btn-no');
+        if (noBtn) noBtn.style.display = 'none';
+
+        confetti({
+          particleCount: 130,
+          spread: 85,
+          origin: { y: 0.6 }
+        });
+
+        const actionArea = document.getElementById('action-area');
+        const wspText = encodeURIComponent("OE YA TE DIJE QUE SÍ HARÉ TU ENVÍO, DEJA DE JODER 😂📦");
+        actionArea.innerHTML = `
+          <a class="btn-wsp" href="https://api.whatsapp.com/send?text=${wspText}" target="_blank">
+            👉 CONFÍRMAME AL TOQUE TEYO
+          </a>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
